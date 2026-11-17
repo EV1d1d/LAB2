@@ -27,8 +27,8 @@ public class Breakout extends GraphicsProgram {
 	public static final int APPLICATION_HEIGHT = 600;
 
 	/** Dimensions of game board (usually the same) */
-	private static final int WIDTH = APPLICATION_WIDTH;
-	private static final int HEIGHT = APPLICATION_HEIGHT;
+	private static int WIDTH = APPLICATION_WIDTH;
+	private static int HEIGHT = APPLICATION_HEIGHT;
 
 	/** Dimensions of the paddle */
 	private static final int PADDLE_WIDTH = 60;
@@ -62,7 +62,7 @@ public class Breakout extends GraphicsProgram {
 	/** Number of turns */
 	private static final int NTURNS = 3;
 
-	private static final Color BACKGROUND = Color.BLUE;
+	private static final Color BACKGROUND = Color.CYAN;
 	private final RandomGenerator random = RandomGenerator.getInstance();
 
 	private GImage paddle;
@@ -83,14 +83,33 @@ public class Breakout extends GraphicsProgram {
 	/** Runs the Breakout program. */
 	public void run() {
 		setup();
+		drawBricksLVL1();
 		addMouseListeners();
 
 
 	}
 
 	private void setup() {
-		setSize(APPLICATION_WIDTH,APPLICATION_HEIGHT);
 		setBackground(BACKGROUND);
+	}
+
+	private void drawBricksLVL1(){
+		for(int i = 0; i<NBRICK_ROWS;i++){
+			for(int j = 0; j<NBRICKS_PER_ROW;j++){
+				double xBrick = BRICK_SEP+j*(BRICK_WIDTH+BRICK_SEP);
+				double yBrick=BRICK_Y_OFFSET+i*(BRICK_HEIGHT+BRICK_SEP);
+				GRect BRICK = new GRect(xBrick,yBrick,BRICK_WIDTH,BRICK_HEIGHT);
+				BRICK.setFilled(true);
+				if(i<NBRICK_ROWS/3){
+					BRICK.setColor(Color.RED);
+				}else if(i<NBRICK_ROWS*2/3){
+					BRICK.setColor(Color.GREEN);
+				}else{
+					BRICK.setColor(Color.YELLOW);
+				}
+				add(BRICK);
+			}
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {
