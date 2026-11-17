@@ -17,7 +17,7 @@ import java.awt.event.*;
 
 public class Breakout extends GraphicsProgram {
 
-	private int Hbbfbfbf = 0;
+	private int jjjjjj = 0;
 
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
