@@ -68,6 +68,8 @@ public class Breakout extends GraphicsProgram {
 	private GImage paddle;
 	private GImage ball;
 	private GImage brick;
+	private GImage Menu;
+	private GImage gameBackground;
 
 	private AudioClip ballSound;
 	private AudioClip brickSound;
