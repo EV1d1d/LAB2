@@ -75,6 +75,7 @@ public class Breakout extends GraphicsProgram {
 	private GImage levelThreeIcon;
 	private GRect selectedLevelBorder;
 	private int selectedLevel;
+	private boolean menuActive;
 
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -98,28 +99,8 @@ public class Breakout extends GraphicsProgram {
 		setSafeVolume(musicInMenu, 0.05);
 		musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
 		setSafeVolume(musicInGame, 0.5);
-		drawBricksLVL1();
 		addMouseListeners();
 		menu();
-		createPaddle();
-		//createBall();
-		//createPaddle();
-
-		switch (selectedLevel) {
-			case 1:
-				lvl1();
-				break;
-			case 2:
-				lvl2();
-				break;
-			case 3:
-				lvl3();
-				break;
-		}
-
-
-		menu();
-		//createBall();
 	}
 
 	private void lvl3() {
@@ -132,15 +113,21 @@ public class Breakout extends GraphicsProgram {
 
 	private void lvl1() {
 		startGameMusic();
+		removeAll();
+		setGameBackground();
+		drawBricksLVL1();
+		createPaddle();
 	}
 
 	private void startGameMusic() {
+		menuActive = false;
 		musicInMenu.stop();
 		musicInGame.stop();
 		musicInGame.loop();
 	}
 
 	private void menu() {
+		menuActive = true;
 		musicInMenu.stop();
 		musicInMenu.loop();
 
@@ -200,10 +187,16 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	private void setup() {
-		setBackground(BACKGROUND);
+		setGameBackground();
 		lives = NTURNS;
 		ballSpeed=3; // у лвл прибрати to fix
 
+	}
+
+	private void setGameBackground() {
+		gameBackground = new GImage("Images/gameBackground.jpg");
+		gameBackground.setSize(WIDTH, HEIGHT);
+		add(gameBackground);
 	}
 
 	private void drawBricksLVL1(){
@@ -243,13 +236,19 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	public void mouseMoved(MouseEvent e){
+		if (paddle == null) {
+			return;
+		}
 		double x = e.getX() - PADDLE_WIDTH/2.0;
 		x = Math.max(0, Math.min(x, getWidth() - PADDLE_WIDTH));
 		paddle.setLocation(x, paddle.getY());
-
 	}
 
 	public void mousePressed(MouseEvent e) {
+		if (!menuActive) {
+			return;
+		}
+
 		GImage clickedIcon = null;
 
 		if (levelOneIcon != null && levelOneIcon.contains(e.getX(), e.getY())) {
@@ -274,21 +273,6 @@ public class Breakout extends GraphicsProgram {
 		} else if (selectedLevel == 3) {
 			lvl3();
 		}
-
-		if (selectedLevelBorder != null) {
-			remove(selectedLevelBorder);
-		}
-
-		double borderSize = 6;
-		selectedLevelBorder = new GRect(
-				clickedIcon.getX() - borderSize,
-				clickedIcon.getY() - borderSize,
-				clickedIcon.getWidth() + borderSize * 2,
-				clickedIcon.getHeight() + borderSize * 2
-		);
-		selectedLevelBorder.setFilled(false);
-		selectedLevelBorder.setColor(Color.YELLOW);
-		add(selectedLevelBorder);
 	}
 
 }
