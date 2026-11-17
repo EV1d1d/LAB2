@@ -8,12 +8,16 @@
  */
 
 import acm.graphics.*;
-import acm.program.*;
-import acm.util.*;
+import acm.program.GraphicsProgram;
+import acm.util.MediaTools;
+import acm.util.RandomGenerator;
+import acm.util.SoundClip;
 
-import java.applet.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.applet.AudioClip;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.MouseEvent;
+
 
 public class Breakout extends GraphicsProgram {
 
@@ -59,6 +63,19 @@ public class Breakout extends GraphicsProgram {
 	private static final int NTURNS = 3;
 
 	private static final Color BACKGROUND = Color.BLUE;
+	private final RandomGenerator random = RandomGenerator.getInstance();
+
+	private GImage paddle;
+	private GImage ball;
+	private GImage brick;
+
+	private AudioClip ballSound;
+	private AudioClip brickSound;
+	private AudioClip brickSound2;
+	private AudioClip brickSound3;
+	private AudioClip musicInMenu;
+	private AudioClip musicInGame;
+
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
