@@ -135,11 +135,19 @@ public class Breakout extends GraphicsProgram {
 
 	private void addLevelLabel(String text, double iconX, double iconY,
 							   double iconWidth, double iconHeight) {
+		double labelY = iconY + iconHeight + 24;
+
+		GRect whiteRectangle = new GRect(iconX, labelY, iconWidth, 38);
+		whiteRectangle.setFilled(true);
+		whiteRectangle.setColor(Color.WHITE);
+		add(whiteRectangle);
+
 		GLabel levelLabel = new GLabel(text);
 		levelLabel.setFont(new Font("Arial", Font.BOLD, 25));
-		levelLabel.setColor(Color.BLACK);
+		levelLabel.setColor(new Color(80, 40, 50));
 		double labelX = iconX + (iconWidth - levelLabel.getWidth()) / 2;
-		add(levelLabel, labelX, iconY + iconHeight + 24);
+		double textY = labelY + (38 + levelLabel.getAscent()) / 2 - 2;
+		add(levelLabel, labelX, textY);
 	}
 
 	private void setup() {
