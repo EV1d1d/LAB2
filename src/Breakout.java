@@ -58,27 +58,15 @@ public class Breakout extends GraphicsProgram {
 	/** Number of turns */
 	private static final int NTURNS = 3;
 
-	private static final Color BACKGROUND = Color.CYAN;
+	private static final Color BACKGROUND = Color.BLUE;
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
 	public void run() {
 		setup();
-		drawBricksLVL1();
 		addMouseListeners();
 
 
-	}
-
-	private void drawBricksLVL1(){
-		for(int i = 0 ; i<NBRICK_ROWS;i++){
-			for(int j = 0; j<NBRICKS_PER_ROW;j++){
-				double xBrick = BRICK_SEP+j*(BRICK_WIDTH+BRICK_SEP);
-				double yBrick = BRICK_Y_OFFSET + i*(BRICK_HEIGHT+BRICK_SEP);
-				GRect BRICK = new GRect(xBrick,yBrick,BRICK_WIDTH,BRICK_HEIGHT);
-				add(BRICK);
-			}
-		}
 	}
 
     private void setup() {
