@@ -58,15 +58,23 @@ public class Breakout extends GraphicsProgram {
 	/** Number of turns */
 	private static final int NTURNS = 3;
 
+	private static final Color BACKGROUND = Color.BLUE;
+
 	/* Method: run() */
 	/** Runs the Breakout program. */
 	public void run() {
+		setup();
 		addMouseListeners();
 
 
 	}
 
-	public void mousePressed(MouseEvent e) {
+    private void setup() {
+        setSize(APPLICATION_WIDTH,APPLICATION_HEIGHT);
+        setBackground(BACKGROUND);
+    }
+
+    public void mousePressed(MouseEvent e) {
 
 	}
 
