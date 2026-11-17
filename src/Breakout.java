@@ -87,7 +87,7 @@ public class Breakout extends GraphicsProgram {
 	private double vx,vy;
 	private int points;
 	private double ballSpeed;
-	private int brickLifeLenght;
+	private int brickLifeLenght; //to fix
 
 
 	/* Method: run() */
@@ -95,13 +95,31 @@ public class Breakout extends GraphicsProgram {
 	public void run() {
 		setup();
 		musicInMenu = MediaTools.loadAudioClip("Music/menuMusic.wav");
-		setSafeVolume(musicInMenu, 0.12);
+		setSafeVolume(musicInMenu, 0.05);
 		musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
-		setSafeVolume(musicInGame, 0.12);
+		setSafeVolume(musicInGame, 0.5);
 		drawBricksLVL1();
 		addMouseListeners();
 		menu();
 		createPaddle();
+		//createBall();
+		//createPaddle();
+
+		switch (selectedLevel) {
+			case 1:
+				lvl1();
+				break;
+			case 2:
+				lvl2();
+				break;
+			case 3:
+				lvl3();
+				break;
+		}
+
+
+		menu();
+		//createBall();
 	}
 
 	private void lvl3() {
@@ -184,7 +202,7 @@ public class Breakout extends GraphicsProgram {
 	private void setup() {
 		setBackground(BACKGROUND);
 		lives = NTURNS;
-		ballSpeed=3;
+		ballSpeed=3; // у лвл прибрати to fix
 
 	}
 
