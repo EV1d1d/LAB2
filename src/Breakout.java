@@ -87,6 +87,7 @@ public class Breakout extends GraphicsProgram {
 	private double vx,vy;
 	private int points;
 	private double ballSpeed;
+	private int brickLifeLenght;
 
 
 	/* Method: run() */
@@ -97,7 +98,8 @@ public class Breakout extends GraphicsProgram {
 		setSafeVolume(musicInMenu, 0.12);
 		drawBricksLVL1();
 		addMouseListeners();
-		menu();
+		//menu();
+		createBall();
 		
 		switch (selectedLevel) {
 			case 1:
@@ -184,6 +186,9 @@ public class Breakout extends GraphicsProgram {
 
 	private void setup() {
 		setBackground(BACKGROUND);
+		lives = NTURNS;
+		ballSpeed=3;
+
 	}
 
 	private void drawBricksLVL1(){
@@ -216,6 +221,18 @@ public class Breakout extends GraphicsProgram {
 		add(ball,getWidth()/2.0 - BALL_RADIUS*2,getHeight()/2.0 - BALL_RADIUS*2);
 	}
 
+	private void createPaddle(){
+		paddle = new GImage("Images/paddle.png");
+		paddle.setSize(PADDLE_WIDTH,PADDLE_HEIGHT);
+		add(paddle,(getWidth()-PADDLE_WIDTH)/2.0,getHeight() - PADDLE_Y_OFFSET - PADDLE_HEIGHT);
+	}
+
+	public void mouseMoved(MouseEvent e){
+		double x = e.getX() - PADDLE_WIDTH/2.0;
+		x = Math.max(0, Math.min(x, getWidth() - PADDLE_WIDTH));
+		paddle.setLocation(x, paddle.getY());
+
+	}
 
 	public void mousePressed(MouseEvent e) {
 		GImage clickedIcon = null;
