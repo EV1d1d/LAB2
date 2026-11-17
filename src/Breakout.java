@@ -98,8 +98,29 @@ public class Breakout extends GraphicsProgram {
 		drawBricksLVL1();
 		addMouseListeners();
 		menu();
+		
+		switch (selectedLevel) {
+			case 1:
+				lvl1();
+				break;
+			case 2:
+				lvl2();
+				break;
+			case 3:
+				lvl3();
+				break;
+		}
 
 
+	}
+
+	private void lvl3() {
+	}
+
+	private void lvl2() {
+	}
+
+	private void lvl1() {
 	}
 
 	private void menu() {
