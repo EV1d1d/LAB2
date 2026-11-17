@@ -81,6 +81,11 @@ public class Breakout extends GraphicsProgram {
 	private AudioClip musicInMenu;
 	private AudioClip musicInGame;
 
+	private int lives;
+	private double vx,vy;
+	private int points;
+	private double ballSpeed;
+
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
@@ -159,6 +164,18 @@ public class Breakout extends GraphicsProgram {
 			}
 		}
 	}
+
+	private void createBall(){
+		ball = new GImage("Images/pig.png");
+		ball.setSize(2*BALL_RADIUS,2*BALL_RADIUS);
+		vy=ballSpeed;
+		vx=random.nextDouble(0.25,0.75)*ballSpeed;
+		if(random.nextBoolean()){
+			vx = -vx;
+		}
+		add(ball,getWidth()/2.0 - BALL_RADIUS*2,getHeight()/2.0 - BALL_RADIUS*2);
+	}
+
 
 	public void mousePressed(MouseEvent e) {
 		GImage clickedIcon = null;
