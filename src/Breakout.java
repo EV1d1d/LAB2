@@ -9,9 +9,7 @@
 
 import acm.graphics.*;
 import acm.program.GraphicsProgram;
-import acm.util.MediaTools;
 import acm.util.RandomGenerator;
-import acm.util.SoundClip;
 
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -70,6 +68,11 @@ public class Breakout extends GraphicsProgram {
 	private GImage brick;
 	private GImage Menu;
 	private GImage gameBackground;
+	private GImage levelOneIcon;
+	private GImage levelTwoIcon;
+	private GImage levelThreeIcon;
+	private GRect selectedLevelBorder;
+	private int selectedLevel;
 
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -85,8 +88,53 @@ public class Breakout extends GraphicsProgram {
 		setup();
 		drawBricksLVL1();
 		addMouseListeners();
+		menu();
 
 
+	}
+
+	private void menu() {
+		removeAll();
+
+		Menu = new GImage("Images/menu.png");
+		Menu.setSize(WIDTH, HEIGHT);
+		add(Menu);
+
+		GLabel title = new GLabel("Breakout");
+		title.setFont(new Font("Arial", Font.BOLD, 38));
+		title.setColor(Color.WHITE);
+		add(title, (WIDTH - title.getWidth()) / 2, 55);
+
+		double iconWidth = 96;
+		double iconHeight = 144;
+		double gap = 18;
+		double rowWidth = iconWidth * 3 + gap * 2;
+		double startX = (WIDTH - rowWidth) / 2;
+		double iconY = 220;
+
+		levelOneIcon = new GImage("Images/pig.png");
+		levelOneIcon.setSize(iconWidth, iconHeight);
+		add(levelOneIcon, startX, iconY);
+		addLevelLabel("Level 1", startX, iconY, iconWidth, iconHeight);
+
+		levelTwoIcon = new GImage("Images/pig.png");
+		levelTwoIcon.setSize(iconWidth, iconHeight);
+		add(levelTwoIcon, startX + iconWidth + gap, iconY);
+		addLevelLabel("Level 2", startX + iconWidth + gap, iconY, iconWidth, iconHeight);
+
+		levelThreeIcon = new GImage("Images/pig.png");
+		levelThreeIcon.setSize(iconWidth, iconHeight);
+		add(levelThreeIcon, startX + (iconWidth + gap) * 2, iconY);
+		addLevelLabel("Level 3", startX + (iconWidth + gap) * 2, iconY, iconWidth, iconHeight);
+	}
+
+	private void addLevelLabel(String text, double iconX, double iconY,
+							   double iconWidth, double iconHeight) {
+		GLabel levelLabel = new GLabel(text);
+		levelLabel.setFont(new Font("Arial", Font.BOLD, 25));
+		levelLabel.setColor(Color.BLACK);
+		double labelX = iconX + (iconWidth - levelLabel.getWidth()) / 2;
+		add(levelLabel, labelX, iconY + iconHeight + 24);
 	}
 
 	private void setup() {
@@ -113,7 +161,37 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	public void mousePressed(MouseEvent e) {
+		GImage clickedIcon = null;
 
+		if (levelOneIcon != null && levelOneIcon.contains(e.getX(), e.getY())) {
+			selectedLevel = 1;
+			clickedIcon = levelOneIcon;
+		} else if (levelTwoIcon != null && levelTwoIcon.contains(e.getX(), e.getY())) {
+			selectedLevel = 2;
+			clickedIcon = levelTwoIcon;
+		} else if (levelThreeIcon != null && levelThreeIcon.contains(e.getX(), e.getY())) {
+			selectedLevel = 3;
+			clickedIcon = levelThreeIcon;
+		}
+
+		if (clickedIcon == null) {
+			return;
+		}
+
+		if (selectedLevelBorder != null) {
+			remove(selectedLevelBorder);
+		}
+
+		double borderSize = 6;
+		selectedLevelBorder = new GRect(
+				clickedIcon.getX() - borderSize,
+				clickedIcon.getY() - borderSize,
+				clickedIcon.getWidth() + borderSize * 2,
+				clickedIcon.getHeight() + borderSize * 2
+		);
+		selectedLevelBorder.setFilled(false);
+		selectedLevelBorder.setColor(Color.YELLOW);
+		add(selectedLevelBorder);
 	}
 
 }
