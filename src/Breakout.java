@@ -96,27 +96,12 @@ public class Breakout extends GraphicsProgram {
 		setup();
 		musicInMenu = MediaTools.loadAudioClip("Music/menuMusic.wav");
 		setSafeVolume(musicInMenu, 0.12);
+		musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
+		setSafeVolume(musicInGame, 0.12);
 		drawBricksLVL1();
 		addMouseListeners();
 		menu();
-		//createBall();
 		createPaddle();
-		
-		switch (selectedLevel) {
-			case 1:
-				lvl1();
-				break;
-			case 2:
-				lvl2();
-				break;
-			case 3:
-				lvl3();
-				break;
-		}
-
-
-		menu();
-		//createBall();
 	}
 
 	private void lvl3() {
@@ -133,10 +118,6 @@ public class Breakout extends GraphicsProgram {
 
 	private void startGameMusic() {
 		musicInMenu.stop();
-		if (musicInGame == null) {
-			musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
-			setSafeVolume(musicInGame, 0.12);
-		}
 		musicInGame.stop();
 		musicInGame.loop();
 	}
