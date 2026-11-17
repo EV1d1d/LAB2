@@ -9,7 +9,9 @@
 
 import acm.graphics.*;
 import acm.program.GraphicsProgram;
+import acm.util.MediaTools;
 import acm.util.RandomGenerator;
+import acm.util.SoundClip;
 
 import java.applet.AudioClip;
 import java.awt.Color;
@@ -91,6 +93,8 @@ public class Breakout extends GraphicsProgram {
 	/** Runs the Breakout program. */
 	public void run() {
 		setup();
+		musicInMenu = MediaTools.loadAudioClip("Music/menuMusic.wav");
+		setSafeVolume(musicInMenu, 0.12);
 		drawBricksLVL1();
 		addMouseListeners();
 		menu();
@@ -99,7 +103,8 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	private void menu() {
-		removeAll();
+		musicInMenu.stop();
+		musicInMenu.loop();
 
 		Menu = new GImage("Images/menu.png");
 		Menu.setSize(WIDTH, HEIGHT);
@@ -131,6 +136,12 @@ public class Breakout extends GraphicsProgram {
 		levelThreeIcon.setSize(iconWidth, iconHeight);
 		add(levelThreeIcon, startX + (iconWidth + gap) * 2, iconY);
 		addLevelLabel("Level 3", startX + (iconWidth + gap) * 2, iconY, iconWidth, iconHeight);
+	}
+
+	private void setSafeVolume(AudioClip sound, double volume) {
+		if (sound instanceof SoundClip) {
+			((SoundClip) sound).setVolume(volume);
+		}
 	}
 
 	private void addLevelLabel(String text, double iconX, double iconY,
@@ -202,6 +213,8 @@ public class Breakout extends GraphicsProgram {
 		if (clickedIcon == null) {
 			return;
 		}
+
+		musicInMenu.stop();
 
 		if (selectedLevelBorder != null) {
 			remove(selectedLevelBorder);
