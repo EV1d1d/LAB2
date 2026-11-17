@@ -115,15 +115,30 @@ public class Breakout extends GraphicsProgram {
 		}
 
 
+		menu();
+		//createBall();
 	}
 
 	private void lvl3() {
+		startGameMusic();
 	}
 
 	private void lvl2() {
+		startGameMusic();
 	}
 
 	private void lvl1() {
+		startGameMusic();
+	}
+
+	private void startGameMusic() {
+		musicInMenu.stop();
+		if (musicInGame == null) {
+			musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
+			setSafeVolume(musicInGame, 0.12);
+		}
+		musicInGame.stop();
+		musicInGame.loop();
 	}
 
 	private void menu() {
@@ -253,7 +268,13 @@ public class Breakout extends GraphicsProgram {
 			return;
 		}
 
-		musicInMenu.stop();
+		if (selectedLevel == 1) {
+			lvl1();
+		} else if (selectedLevel == 2) {
+			lvl2();
+		} else if (selectedLevel == 3) {
+			lvl3();
+		}
 
 		if (selectedLevelBorder != null) {
 			remove(selectedLevelBorder);
