@@ -85,6 +85,10 @@ public class Breakout extends GraphicsProgram {
 	private AudioClip brickSound3;
 	private AudioClip musicInMenu;
 	private AudioClip musicInGame;
+	private AudioClip WallHit1;
+	private AudioClip WallHit2;
+	private AudioClip WallHit3;
+	private AudioClip brickDestroyed;
 
 	//game logic
 	private int lives;
@@ -102,7 +106,15 @@ public class Breakout extends GraphicsProgram {
 		musicInMenu = MediaTools.loadAudioClip("Music/menuMusic.wav");
 		setSafeVolume(musicInMenu, 0.05);
 		musicInGame = MediaTools.loadAudioClip("Music/gameMusic.wav");
-		setSafeVolume(musicInGame, 0.5);
+		setSafeVolume(musicInGame, 0.15);
+		WallHit1 = MediaTools.loadAudioClip("Music/WallHit1.wav");
+		setSafeVolume(WallHit1, 0.5);
+		WallHit2 = MediaTools.loadAudioClip("Music/WallHit2.wav");
+		setSafeVolume(WallHit2, 0.5);
+		WallHit3 = MediaTools.loadAudioClip("Music/WallHit3.wav");
+		setSafeVolume(WallHit3, 0.5);
+		brickDestroyed = MediaTools.loadAudioClip("Music/brickDestroyed.wav");
+		setSafeVolume(brickDestroyed, 0.5);
 		addMouseListeners();
 		menu();
 	}
@@ -184,6 +196,17 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	private void playRandomWallHit() {
+		double soundIndex = random.nextDouble(0, 3);
+		if (soundIndex < 1) {
+			WallHit1.play();
+		} else if (soundIndex < 2) {
+			WallHit2.play();
+		} else {
+			WallHit3.play();
+		}
+	}
+
 	private void addLevelLabel(String text, double iconX, double iconY,
 							   double iconWidth, double iconHeight) {
 		double labelY = iconY + iconHeight + 24;
@@ -259,14 +282,17 @@ public class Breakout extends GraphicsProgram {
 			if (ball.getX() <= 0) {
 				ball.setLocation(0, ball.getY());
 				vx = Math.abs(vx);
+				playRandomWallHit();
 			} else if (ball.getX() + ball.getWidth() >= getWidth()) {
 				ball.setLocation(getWidth() - ball.getWidth(), ball.getY());
 				vx = -Math.abs(vx);
+				playRandomWallHit();
 			}
 
 			if (ball.getY() <= 0) {
 				ball.setLocation(ball.getX(), 0);
 				vy = Math.abs(vy);
+				playRandomWallHit();
 			}
 
 			if (vy > 0
@@ -282,6 +308,7 @@ public class Breakout extends GraphicsProgram {
 				hitOffset = Math.max(-1, Math.min(1, hitOffset));
 				vx = hitOffset * ballSpeed * 0.85;
 				vy = -Math.sqrt(ballSpeed * ballSpeed - vx * vx);
+				playRandomWallHit();
 			}
 
 			checkBrickCollision(previousY);
@@ -325,6 +352,7 @@ public class Breakout extends GraphicsProgram {
 					&& ball.getY() < brick.getY() + brick.getHeight();
 			if (overlaps) {
 				remove(brick);
+				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
 						|| previousY >= brick.getY() + brick.getHeight()) {
 					vy = -vy;
