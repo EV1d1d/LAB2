@@ -62,6 +62,8 @@ public class Breakout extends GraphicsProgram {
 	/** Number of turns */
 	private static final int NTURNS = 3;
 
+	private static final double HEART_SIZE = 40;
+
 	private static final Color BACKGROUND = Color.CYAN;
 	private final RandomGenerator random = RandomGenerator.getInstance();
 
@@ -79,6 +81,10 @@ public class Breakout extends GraphicsProgram {
 	private boolean menuActive;
 	private volatile boolean levelChosen;
 
+	private GImage heartIcon;
+	private GLabel livesLabel;
+	private GLabel pointsLabel;
+	private static final int HUD = HEIGHT - (HEIGHT/2);
 	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -96,8 +102,9 @@ public class Breakout extends GraphicsProgram {
 	private double vx,vy;
 	private int points;
 	private double ballSpeed;
-	private int brickLifeLenght; //to fix
 	private boolean strongBricks;
+	private int heartAnimationFrames;
+	private double heartX,heartY;
 
 
 	/* Method: run() */
@@ -138,29 +145,37 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	private void lvl3() {
-		startGameMusic();
+		lives = 1;
+		ballSpeed=5;
+		strongBricks=true;
+		startLevel();
 	}
 
 	private void lvl2() {
-		startGameMusic();
+		lives = 3;
+		ballSpeed = 4;
+		strongBricks = true;
+		startLevel();
 	}
 
 	private void lvl1() {
+		lives = 5;
+		ballSpeed = 3;
+		strongBricks = false;
+		startLevel();
+	}
+
+	private void startLevel(){
 		startGameMusic();
 		removeAll();
 		setGameBackground();
-		drawBricksLVL1();
+		drawBricks();
 		createPaddle();
-		ballSpeed = 3;
 		createBall();
-		lives = 3;
 		brickHitted();
 		startBallFlight();
 	}
-
     private void brickHitted() {
-        //
-		//
 		points++;
     }
 
@@ -256,9 +271,13 @@ public class Breakout extends GraphicsProgram {
 		add(gameBackground);
 	}
 
-	private void drawBricksLVL1(){
+	private void drawBricks(){
+		int luckyRow = random.nextInt(0,NBRICK_ROWS);
+		int luckyCol = random.nextInt(0,NBRICKS_PER_ROW);
+
 		for(int i = 0; i<NBRICK_ROWS;i++){
 			for(int j = 0; j<NBRICKS_PER_ROW;j++){
+
 				double xBrick = BRICK_SEP+j*(BRICK_WIDTH+BRICK_SEP);
 				double yBrick=BRICK_Y_OFFSET+i*(BRICK_HEIGHT+BRICK_SEP);
 
@@ -269,6 +288,11 @@ public class Breakout extends GraphicsProgram {
 					color = Color.GREEN;
 				}else{
 					color = Color.YELLOW;
+				}
+
+				boolean isLucky = (i==luckyRow && j == luckyCol);
+				if(strongBricks && (isLucky || random.nextBoolean(0.25))){
+					color = Color.GRAY;
 				}
 				add(createBrick(xBrick,yBrick,color));
 			}
@@ -370,6 +394,13 @@ public class Breakout extends GraphicsProgram {
 					&& ball.getY() + ball.getHeight() > brick.getY()
 					&& ball.getY() < brick.getY() + brick.getHeight();
 			if (overlaps) {
+				if (brick.getColor().equals(Color.GRAY)) {
+					brick.setColor(Color.LIGHT_GRAY);
+				} else {
+					brickHitted();
+					remove(brick);
+				}
+
 				remove(brick);
 				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
