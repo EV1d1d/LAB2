@@ -77,6 +77,7 @@ public class Breakout extends GraphicsProgram {
 	private GRect selectedLevelBorder;
 	private int selectedLevel;
 	private boolean menuActive;
+	private volatile boolean levelChosen;
 
 	//sounds
 	private AudioClip ballSound;
@@ -116,7 +117,24 @@ public class Breakout extends GraphicsProgram {
 		brickDestroyed = MediaTools.loadAudioClip("Music/brickDestroyed.wav");
 		setSafeVolume(brickDestroyed, 0.5);
 		addMouseListeners();
-		menu();
+
+		while (true) {
+			levelChosen = false;
+			removeAll();
+			menu();
+
+			while (!levelChosen) {
+				pause(50);
+			}
+
+			if (selectedLevel == 1) {
+				lvl1();
+			} else if (selectedLevel == 2) {
+				lvl2();
+			} else if (selectedLevel == 3) {
+				lvl3();
+			}
+		}
 	}
 
 	private void lvl3() {
@@ -137,7 +155,7 @@ public class Breakout extends GraphicsProgram {
 		createBall();
 		lives = 3;
 		brickHitted();
-		new Thread(this::startBallFlight).start();
+		startBallFlight();
 	}
 
     private void brickHitted() {
@@ -155,6 +173,7 @@ public class Breakout extends GraphicsProgram {
 
 	private void menu() {
 		menuActive = true;
+		musicInGame.stop();
 		musicInMenu.stop();
 		musicInMenu.loop();
 
@@ -267,7 +286,7 @@ public class Breakout extends GraphicsProgram {
 		ball = new GImage("Images/pig.png");
 		int ratio = (WIDTH+HEIGHT) / 300;
 		ball.setSize(ratio*BALL_RADIUS,ratio*BALL_RADIUS);
-		double angle = random.nextDouble(0, 360);
+		double angle = random.nextDouble(20, 160);
 		vx = Math.cos(Math.toRadians(angle)) * ballSpeed;
 		vy = Math.sin(Math.toRadians(angle)) * ballSpeed;
 		add(ball,getWidth()/2.0 - BALL_RADIUS,getHeight()/2.0 - BALL_RADIUS);
@@ -327,7 +346,7 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	private void setRandomBallDirection() {
-		double angle = random.nextDouble(0, 360);
+		double angle = random.nextDouble(20, 160);
 		vx = Math.cos(Math.toRadians(angle)) * ballSpeed;
 		vy = Math.sin(Math.toRadians(angle)) * ballSpeed;
 	}
@@ -376,8 +395,8 @@ public class Breakout extends GraphicsProgram {
 		if (paddle == null) {
 			return;
 		}
-		double x = e.getX() - PADDLE_WIDTH/2.0;
-		x = Math.max(0, Math.min(x, getWidth() - PADDLE_WIDTH));
+		double x = e.getX() - paddle.getWidth()/2.0;
+		x = Math.max(0, Math.min(x, getWidth() - paddle.getWidth()));
 		paddle.setLocation(x, paddle.getY());
 	}
 
@@ -386,30 +405,17 @@ public class Breakout extends GraphicsProgram {
 			return;
 		}
 
-		GImage clickedIcon = null;
-
 		if (levelOneIcon != null && levelOneIcon.contains(e.getX(), e.getY())) {
 			selectedLevel = 1;
-			clickedIcon = levelOneIcon;
 		} else if (levelTwoIcon != null && levelTwoIcon.contains(e.getX(), e.getY())) {
 			selectedLevel = 2;
-			clickedIcon = levelTwoIcon;
 		} else if (levelThreeIcon != null && levelThreeIcon.contains(e.getX(), e.getY())) {
 			selectedLevel = 3;
-			clickedIcon = levelThreeIcon;
-		}
-
-		if (clickedIcon == null) {
+		} else {
 			return;
 		}
 
-		if (selectedLevel == 1) {
-			lvl1();
-		} else if (selectedLevel == 2) {
-			lvl2();
-		} else if (selectedLevel == 3) {
-			lvl3();
-		}
+		levelChosen = true;
 	}
 
 }
