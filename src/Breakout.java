@@ -117,6 +117,7 @@ public class Breakout extends GraphicsProgram {
 		setGameBackground();
 		drawBricksLVL1();
 		createPaddle();
+		createBall();
 	}
 
 	private void startGameMusic() {
@@ -220,13 +221,14 @@ public class Breakout extends GraphicsProgram {
 
 	private void createBall(){
 		ball = new GImage("Images/pig.png");
-		ball.setSize(2*BALL_RADIUS,2*BALL_RADIUS);
+		int ratio = (WIDTH+HEIGHT) / 250;
+		ball.setSize(ratio*BALL_RADIUS,ratio*BALL_RADIUS);
 		vy=ballSpeed;
 		vx=random.nextDouble(0.25,0.75)*ballSpeed;
 		if(random.nextBoolean()){
 			vx = -vx;
 		}
-		add(ball,getWidth()/2.0 - BALL_RADIUS*2,getHeight()/2.0 - BALL_RADIUS*2);
+		add(ball,getWidth()/2.0 - BALL_RADIUS,getHeight()/2.0 - BALL_RADIUS);
 	}
 
 	private void createPaddle(){
