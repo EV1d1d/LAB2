@@ -38,10 +38,10 @@ public class Breakout extends GraphicsProgram {
 	private static final int PADDLE_Y_OFFSET = 150;
 
 	/** Number of bricks per row */
-	private static final int NBRICKS_PER_ROW = 10;
+	private static final int NBRICKS_PER_ROW = 1;
 
 	/** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 10;
+	private static final int NBRICK_ROWS = 1;
 
 	/** Separation between bricks */
 	private static final int BRICK_SEP = 4;
@@ -54,7 +54,7 @@ public class Breakout extends GraphicsProgram {
 	private static final int BRICK_HEIGHT = 8;
 
 	/** Radius of the ball in pixels */
-	private static final int BALL_RADIUS = 10;
+	private static final int BALL_RADIUS = 15;
 
 	/** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 70;
@@ -85,6 +85,12 @@ public class Breakout extends GraphicsProgram {
 	private GLabel livesLabel;
 	private GLabel pointsLabel;
 	private static final int HUD = HEIGHT - (HEIGHT/2);
+	private GRect resultButton;
+	private GLabel resultButtonLabel;
+	private boolean showingResult;
+	private boolean returnToMenuChosen;
+	private boolean won;
+	private int destroyedBricks;
 	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -96,6 +102,7 @@ public class Breakout extends GraphicsProgram {
 	private AudioClip WallHit2;
 	private AudioClip WallHit3;
 	private AudioClip brickDestroyed;
+	private AudioClip winSound;
 
 	//game logic
 	private int lives;
@@ -123,6 +130,8 @@ public class Breakout extends GraphicsProgram {
 		setSafeVolume(WallHit3, 0.5);
 		brickDestroyed = MediaTools.loadAudioClip("Music/brickDestroyed.wav");
 		setSafeVolume(brickDestroyed, 0.5);
+		winSound = MediaTools.loadAudioClip("Music/winSound.wav");
+		setSafeVolume(winSound, 0.5);
 		addMouseListeners();
 
 		while (true) {
@@ -172,11 +181,19 @@ public class Breakout extends GraphicsProgram {
 		drawBricks();
 		createPaddle();
 		createBall();
-		brickHitted();
+		points = 0;
+		destroyedBricks = 0;
+		won = false;
 		startBallFlight();
+		showResult(won);
 	}
     private void brickHitted() {
 		points++;
+		destroyedBricks++;
+		if (destroyedBricks >= NBRICK_ROWS * NBRICKS_PER_ROW) {
+			won = true;
+			lives = 0;
+		}
     }
 
     private void startGameMusic() {
@@ -401,7 +418,6 @@ public class Breakout extends GraphicsProgram {
 					remove(brick);
 				}
 
-				remove(brick);
 				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
 						|| previousY >= brick.getY() + brick.getHeight()) {
@@ -412,6 +428,61 @@ public class Breakout extends GraphicsProgram {
 				return;
 			}
 		}
+	}
+
+	private void showResult(boolean victory) {
+		showingResult = true;
+		returnToMenuChosen = false;
+		menuActive = false;
+		musicInGame.stop();
+		musicInMenu.stop();
+		removeAll();
+
+		GRect background = new GRect(0, 0, getWidth(), getHeight());
+		background.setFilled(true);
+		background.setColor(victory ? new Color(40, 140, 80) : new Color(140, 50, 50));
+		add(background);
+
+		for (int i = 0; i < 20; i++) {
+			GImage resultPig = new GImage(
+					victory ? "Images/winPig.png" : "Images/defetedPig.png");
+			resultPig.setSize(110, 110);
+			double x = random.nextDouble(0, getWidth() - resultPig.getWidth());
+			double y = random.nextDouble(0, getHeight() - resultPig.getHeight());
+			add(resultPig, x, y);
+		}
+
+		GLabel title = new GLabel(victory ? "YOU WIN!" : "GAME OVER");
+		title.setFont(new Font("Arial", Font.BOLD, 42));
+		title.setColor(Color.WHITE);
+		add(title, (getWidth() - title.getWidth()) / 2.0, getHeight() / 2.0 - 60);
+
+		resultButton = new GRect(
+				(getWidth() - 260) / 2.0,
+				getHeight() / 2.0 + 20,
+				260,
+				60);
+		resultButton.setFilled(true);
+		resultButton.setColor(Color.WHITE);
+		add(resultButton);
+
+		resultButtonLabel = new GLabel("Return to menu");
+		resultButtonLabel.setFont(new Font("Arial", Font.BOLD, 24));
+		resultButtonLabel.setColor(new Color(50, 50, 50));
+		add(resultButtonLabel,
+				resultButton.getX() + (resultButton.getWidth() - resultButtonLabel.getWidth()) / 2.0,
+				resultButton.getY() + (resultButton.getHeight() + resultButtonLabel.getAscent()) / 2.0 - 4);
+
+		if (victory) {
+			winSound.stop();
+			winSound.play();
+		}
+
+		while (!returnToMenuChosen) {
+			pause(50);
+		}
+
+		showingResult = false;
 	}
 
 	private void createPaddle(){
@@ -432,6 +503,13 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	public void mousePressed(MouseEvent e) {
+		if (showingResult) {
+			if (resultButton != null && resultButton.contains(e.getX(), e.getY())) {
+				returnToMenuChosen = true;
+			}
+			return;
+		}
+
 		if (!menuActive) {
 			return;
 		}
