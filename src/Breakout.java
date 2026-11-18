@@ -193,7 +193,16 @@ public class Breakout extends GraphicsProgram {
 	}
 
     private void createHUD() {
+		double hudHeight = HEIGHT/20;
+		GRect hud = new GRect(0,HUD,WIDTH,hudHeight);
+		hud.setFilled(true);
+		hud.setColor(new Color(200,0,50,120));
+		add(hud);
 
+		heartIcon = new GImage("Images/heart.png");
+		double xHeart = WIDTH/10;
+		heartIcon.setSize(HEART_SIZE,HEART_SIZE);
+		add(heartIcon,xHeart,HUD);
     }
 
     private void brickHitted() {
