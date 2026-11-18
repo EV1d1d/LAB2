@@ -124,9 +124,16 @@ public class Breakout extends GraphicsProgram {
 		createBall();
 		lives = 3;
 		ballSpeed=3;
+		brickHitted();
 	}
 
-	private void startGameMusic() {
+    private void brickHitted() {
+        //
+		//
+		points++;
+    }
+
+    private void startGameMusic() {
 		menuActive = false;
 		musicInMenu.stop();
 		musicInGame.stop();
