@@ -400,8 +400,6 @@ public class Breakout extends GraphicsProgram {
 					brickHitted();
 					remove(brick);
 				}
-
-				remove(brick);
 				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
 						|| previousY >= brick.getY() + brick.getHeight()) {
