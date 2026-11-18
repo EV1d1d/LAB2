@@ -103,6 +103,7 @@ public class Breakout extends GraphicsProgram {
 	private AudioClip WallHit3;
 	private AudioClip brickDestroyed;
 	private AudioClip winSound;
+	private AudioClip loseSound;
 
 	//game logic
 	private int lives;
@@ -132,6 +133,8 @@ public class Breakout extends GraphicsProgram {
 		setSafeVolume(brickDestroyed, 0.5);
 		winSound = MediaTools.loadAudioClip("Music/winSound.wav");
 		setSafeVolume(winSound, 0.5);
+		loseSound = MediaTools.loadAudioClip("Music/loseSound.wav");
+		setSafeVolume(loseSound, 0.5);
 		addMouseListeners();
 
 		while (true) {
@@ -483,6 +486,9 @@ public class Breakout extends GraphicsProgram {
 		if (victory) {
 			winSound.stop();
 			winSound.play();
+		} else {
+			loseSound.stop();
+			loseSound.play();
 		}
 
 		while (!returnToMenuChosen) {
