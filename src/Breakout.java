@@ -23,8 +23,8 @@ public class Breakout extends GraphicsProgram {
 
 
 	/** Width and height of application window in pixels */
-	public static final int APPLICATION_WIDTH = 400;
-	public static final int APPLICATION_HEIGHT = 600;
+	public static final int APPLICATION_WIDTH = 600;
+	public static final int APPLICATION_HEIGHT = 800;
 
 	/** Dimensions of game board (usually the same) */
 	private static int WIDTH = APPLICATION_WIDTH;
@@ -118,6 +118,8 @@ public class Breakout extends GraphicsProgram {
 		drawBricksLVL1();
 		createPaddle();
 		createBall();
+		lives = 3;
+		ballSpeed=3;
 	}
 
 	private void startGameMusic() {
@@ -221,7 +223,7 @@ public class Breakout extends GraphicsProgram {
 
 	private void createBall(){
 		ball = new GImage("Images/pig.png");
-		int ratio = (WIDTH+HEIGHT) / 250;
+		int ratio = (WIDTH+HEIGHT) / 300;
 		ball.setSize(ratio*BALL_RADIUS,ratio*BALL_RADIUS);
 		vy=ballSpeed;
 		vx=random.nextDouble(0.25,0.75)*ballSpeed;
@@ -233,7 +235,9 @@ public class Breakout extends GraphicsProgram {
 
 	private void createPaddle(){
 		paddle = new GImage("Images/paddle.png");
-		paddle.setSize(PADDLE_WIDTH,PADDLE_HEIGHT);
+		int paddleRatioWidth = (WIDTH/PADDLE_WIDTH)+PADDLE_WIDTH;
+		int paddleRatioHeight = (HEIGHT/PADDLE_HEIGHT/10)+PADDLE_HEIGHT;
+		paddle.setSize(paddleRatioWidth,paddleRatioHeight);
 		add(paddle,(getWidth()-PADDLE_WIDTH)/2.0,getHeight() - PADDLE_Y_OFFSET-PADDLE_HEIGHT);
 	}
 
