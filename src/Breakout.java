@@ -84,13 +84,13 @@ public class Breakout extends GraphicsProgram {
 	private GImage heartIcon;
 	private GLabel livesLabel;
 	private GLabel pointsLabel;
-	private static final int HUD = HEIGHT - (HEIGHT/2);
 	private GRect resultButton;
 	private GLabel resultButtonLabel;
 	private boolean showingResult;
 	private boolean returnToMenuChosen;
 	private boolean won;
 	private int destroyedBricks;
+	private static final int HUD = HEIGHT - (HEIGHT-(HEIGHT/100));
 	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -184,9 +184,15 @@ public class Breakout extends GraphicsProgram {
 		points = 0;
 		destroyedBricks = 0;
 		won = false;
+		createHUD();
 		startBallFlight();
 		showResult(won);
 	}
+
+    private void createHUD() {
+
+    }
+
     private void brickHitted() {
 		points++;
 		destroyedBricks++;
@@ -418,6 +424,7 @@ public class Breakout extends GraphicsProgram {
 					remove(brick);
 				}
 
+				remove(brick);
 				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
 						|| previousY >= brick.getY() + brick.getHeight()) {
