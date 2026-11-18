@@ -65,6 +65,7 @@ public class Breakout extends GraphicsProgram {
 	private static final Color BACKGROUND = Color.CYAN;
 	private final RandomGenerator random = RandomGenerator.getInstance();
 
+	//ui
 	private GImage paddle;
 	private GImage ball;
 	private GImage brick;
@@ -77,6 +78,7 @@ public class Breakout extends GraphicsProgram {
 	private int selectedLevel;
 	private boolean menuActive;
 
+	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
 	private AudioClip brickSound2;
@@ -84,11 +86,13 @@ public class Breakout extends GraphicsProgram {
 	private AudioClip musicInMenu;
 	private AudioClip musicInGame;
 
+	//game logic
 	private int lives;
 	private double vx,vy;
 	private int points;
 	private double ballSpeed;
 	private int brickLifeLenght; //to fix
+	private boolean strongBricks;
 
 
 	/* Method: run() */
