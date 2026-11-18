@@ -211,18 +211,25 @@ public class Breakout extends GraphicsProgram {
 			for(int j = 0; j<NBRICKS_PER_ROW;j++){
 				double xBrick = BRICK_SEP+j*(BRICK_WIDTH+BRICK_SEP);
 				double yBrick=BRICK_Y_OFFSET+i*(BRICK_HEIGHT+BRICK_SEP);
-				GRect BRICK = new GRect(xBrick,yBrick,BRICK_WIDTH,BRICK_HEIGHT);
-				BRICK.setFilled(true);
+
+				Color color;
 				if(i<NBRICK_ROWS/3){
-					BRICK.setColor(Color.RED);
+					color = Color.RED;
 				}else if(i<NBRICK_ROWS*2/3){
-					BRICK.setColor(Color.GREEN);
+					color = Color.GREEN;
 				}else{
-					BRICK.setColor(Color.YELLOW);
+					color = Color.YELLOW;
 				}
-				add(BRICK);
+				add(createBrick(xBrick,yBrick,color));
 			}
 		}
+	}
+
+	private GObject createBrick(double x, double y , Color color){
+		GRect brick = new GRect (x,y,BRICK_WIDTH,BRICK_HEIGHT);
+		brick.setFilled(true);
+		brick.setColor(color);
+		return brick;
 	}
 
 	private void createBall(){
