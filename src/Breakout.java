@@ -121,10 +121,11 @@ public class Breakout extends GraphicsProgram {
 		setGameBackground();
 		drawBricksLVL1();
 		createPaddle();
+		ballSpeed = 3;
 		createBall();
 		lives = 3;
-		ballSpeed=3;
 		brickHitted();
+		new Thread(this::startBallFlight).start();
 	}
 
     private void brickHitted() {
@@ -243,12 +244,96 @@ public class Breakout extends GraphicsProgram {
 		ball = new GImage("Images/pig.png");
 		int ratio = (WIDTH+HEIGHT) / 300;
 		ball.setSize(ratio*BALL_RADIUS,ratio*BALL_RADIUS);
-		vy=ballSpeed;
-		vx=random.nextDouble(0.25,0.75)*ballSpeed;
-		if(random.nextBoolean()){
-			vx = -vx;
-		}
+		double angle = random.nextDouble(0, 360);
+		vx = Math.cos(Math.toRadians(angle)) * ballSpeed;
+		vy = Math.sin(Math.toRadians(angle)) * ballSpeed;
 		add(ball,getWidth()/2.0 - BALL_RADIUS,getHeight()/2.0 - BALL_RADIUS);
+	}
+
+	private void startBallFlight() {
+		while (lives > 0) {
+			double previousY = ball.getY();
+			ball.move(vx, vy);
+
+
+			if (ball.getX() <= 0) {
+				ball.setLocation(0, ball.getY());
+				vx = Math.abs(vx);
+			} else if (ball.getX() + ball.getWidth() >= getWidth()) {
+				ball.setLocation(getWidth() - ball.getWidth(), ball.getY());
+				vx = -Math.abs(vx);
+			}
+
+			if (ball.getY() <= 0) {
+				ball.setLocation(ball.getX(), 0);
+				vy = Math.abs(vy);
+			}
+
+			if (vy > 0
+					&& previousY + ball.getHeight() <= paddle.getY()
+					&& ball.getY() + ball.getHeight() >= paddle.getY()
+					&& ball.getX() + ball.getWidth() > paddle.getX()
+					&& ball.getX() < paddle.getX() + paddle.getWidth()) {
+				ball.setLocation(ball.getX(), paddle.getY() - ball.getHeight());
+
+				double paddleCenter = paddle.getX() + paddle.getWidth() / 2.0;
+				double ballCenter = ball.getX() + ball.getWidth() / 2.0;
+				double hitOffset = (ballCenter - paddleCenter) / (paddle.getWidth() / 2.0);
+				hitOffset = Math.max(-1, Math.min(1, hitOffset));
+				vx = hitOffset * ballSpeed * 0.85;
+				vy = -Math.sqrt(ballSpeed * ballSpeed - vx * vx);
+			}
+
+			checkBrickCollision(previousY);
+
+			if (ball.getY() > getHeight()) {
+				lives--;
+				if (lives > 0) {
+					ball.setLocation(getWidth() / 2.0 - ball.getWidth() / 2.0,
+							getHeight() / 2.0 - ball.getHeight() / 2.0);
+					setRandomBallDirection();
+				}
+			}
+
+			pause(10);
+		}
+	}
+
+	private void setRandomBallDirection() {
+		double angle = random.nextDouble(0, 360);
+		vx = Math.cos(Math.toRadians(angle)) * ballSpeed;
+		vy = Math.sin(Math.toRadians(angle)) * ballSpeed;
+	}
+
+
+
+	private void checkBrickCollision(double previousY) {
+		for (int i = 0; i < getElementCount(); i++) {
+			GObject object = getElement(i);
+			if (!(object instanceof GRect)) {
+				continue;
+			}
+
+			GRect brick = (GRect) object;
+			if (brick.getWidth() != BRICK_WIDTH || brick.getHeight() != BRICK_HEIGHT) {
+				continue;
+			}
+
+			boolean overlaps = ball.getX() + ball.getWidth() > brick.getX()
+					&& ball.getX() < brick.getX() + brick.getWidth()
+					&& ball.getY() + ball.getHeight() > brick.getY()
+					&& ball.getY() < brick.getY() + brick.getHeight();
+			if (overlaps) {
+				remove(brick);
+				if (previousY + ball.getHeight() <= brick.getY()
+						|| previousY >= brick.getY() + brick.getHeight()) {
+					vy = -vy;
+				} else {
+					vx = -vx;
+				}
+				return;
+			}
+		}
 	}
 
 	private void createPaddle(){
