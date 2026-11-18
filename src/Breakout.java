@@ -84,7 +84,7 @@ public class Breakout extends GraphicsProgram {
 	private GImage heartIcon;
 	private GLabel livesLabel;
 	private GLabel pointsLabel;
-	private static final int HUD = HEIGHT - (HEIGHT/2);
+	private static final int HUD = HEIGHT - (HEIGHT-(HEIGHT/100));
 	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -172,9 +172,14 @@ public class Breakout extends GraphicsProgram {
 		drawBricks();
 		createPaddle();
 		createBall();
-		brickHitted();
+		createHUD();
 		startBallFlight();
 	}
+
+    private void createHUD() {
+
+    }
+
     private void brickHitted() {
 		points++;
     }
