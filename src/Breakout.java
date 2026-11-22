@@ -38,10 +38,10 @@ public class Breakout extends GraphicsProgram {
 	private static final int PADDLE_Y_OFFSET = 150;
 
 	/** Number of bricks per row */
-	private static final int NBRICKS_PER_ROW = 1;
+	private static final int NBRICKS_PER_ROW = 10;
 
 	/** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 1;
+	private static final int NBRICK_ROWS = 10;
 
 	/** Separation between bricks */
 	private static final int BRICK_SEP = 4;
@@ -203,10 +203,45 @@ public class Breakout extends GraphicsProgram {
 		double xHeart = WIDTH/10;
 		heartIcon.setSize(HEART_SIZE,HEART_SIZE);
 		add(heartIcon,xHeart,HUD);
+
+		livesLabel = new GLabel("");
+		livesLabel.setFont(new Font("MonoSpaced",Font.BOLD,26));
+		livesLabel.setColor(Color.WHITE);
+		add(livesLabel,xHeart+HEART_SIZE+10,0);
+
+		pointsLabel = new GLabel("");
+		pointsLabel.setFont(new Font("Monospaced",Font.BOLD,26));
+		pointsLabel.setColor(Color.WHITE);
+		add(pointsLabel);
+
+		updateHUD();
     }
+
+    private void updateHUD() {
+        if(livesLabel==null) return;
+		double hudHeight = HEIGHT/20;
+		double textY = HUD +(hudHeight+livesLabel.getAscent())/2-2;
+
+		livesLabel.setLabel("Lives: "+lives);
+		livesLabel.setLocation(livesLabel.getX(),textY);
+
+		pointsLabel.setLabel("Score: "+points);
+		pointsLabel.setLocation(WIDTH-pointsLabel.getWidth()-15,textY);
+
+    }
+
+	private void animateHeart(){
+		if(heartAnimationFrames<=0) return;
+		heartAnimationFrames--;
+		double scale = 1+0.3*Math.sin(Math.PI*heartAnimationFrames/30);
+		double size = HEART_SIZE*scale;
+		heartIcon.setSize(size,size);
+		heartIcon.setLocation(heartX-(size-HEART_SIZE)/2,heartY-(size-HEART_SIZE)/2);
+	}
 
     private void brickHitted() {
 		points++;
+		updateHUD();
 		destroyedBricks++;
 		if (destroyedBricks >= NBRICK_ROWS * NBRICKS_PER_ROW) {
 			won = true;
@@ -393,13 +428,15 @@ public class Breakout extends GraphicsProgram {
 
 			if (ball.getY() > getHeight()) {
 				lives--;
+				updateHUD();
+				heartAnimationFrames=30;
 				if (lives > 0) {
 					ball.setLocation(getWidth() / 2.0 - ball.getWidth() / 2.0,
 							getHeight() / 2.0 - ball.getHeight() / 2.0);
 					setRandomBallDirection();
 				}
 			}
-
+			animateHeart();
 			pause(10);
 		}
 	}
