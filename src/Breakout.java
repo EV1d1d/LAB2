@@ -93,6 +93,7 @@ public class Breakout extends GraphicsProgram {
 	private boolean won;
 	private int destroyedBricks;
 	private static final int HUD = HEIGHT - (HEIGHT-(HEIGHT/100));
+	private int bestScore;
 
 	//sounds
 	private AudioClip ballSound;
@@ -121,6 +122,7 @@ public class Breakout extends GraphicsProgram {
 	private static final double FRUIT_SPEED=1;
 	private int FRUITSPAWN_DELAY;
     private int bonusType;
+	private int freeLife=50;
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
@@ -172,16 +174,16 @@ public class Breakout extends GraphicsProgram {
 	}
 
 	private void lvl2() {
-		lives = 3;
-		ballSpeed = 6;
+		lives = 2;
+		ballSpeed = 7;
 		strongBricks = true;
 		bonuses=true;
 		startLevel();
 	}
 
 	private void lvl1() {
-		lives = 5;
-		ballSpeed = 4;
+		lives = 3;
+		ballSpeed = 5;
 		strongBricks = false;
 		bonuses=false;
 		startLevel();
@@ -310,10 +312,13 @@ public class Breakout extends GraphicsProgram {
 	}
 
     private void brickHitted() {
-		//if(!brick.getColor().equals(Color.GRAY)){
-			points++;
-		//}
+		points++;
 
+        if(points>freeLife){
+			lives++;
+			freeLife+=50;
+			heartAnimationFrames=30;
+		}
 
 		updateHUD();
 		destroyedBricks++;
@@ -585,10 +590,29 @@ public class Breakout extends GraphicsProgram {
 		}
 
 		GLabel title = new GLabel(victory ? "YOU WIN!" : "GAME OVER");
-		title.setFont(new Font("Arial", Font.BOLD, 42));
+		title.setFont(new Font("MonoSpaced", Font.BOLD, 42));
 		title.setColor(Color.WHITE);
 		add(title, (getWidth() - title.getWidth()) / 2.0, getHeight() / 2.0 - 60);
 
+		GLabel scoreLabel = new GLabel("Score: " + points);
+		scoreLabel.setFont(new Font("MonoSpaced", Font.BOLD, 30));
+		scoreLabel.setColor(Color.WHITE);
+		add(scoreLabel, (getWidth() - scoreLabel.getWidth()) / 2.0, getHeight() / 2.0 - 15);
+		boolean newBestResult = false;
+        if(points>bestScore){
+			bestScore=points;
+			newBestResult = true;
+		}
+		GLabel bestLabel;
+		if (newBestResult) {
+			bestLabel = new GLabel("NEW BEST: " + bestScore);
+			bestLabel.setColor(Color.YELLOW);
+		} else {
+			bestLabel = new GLabel("Best: " + bestScore);
+			bestLabel.setColor(Color.WHITE);
+		}
+		bestLabel.setFont(new Font("MonoSpaced", Font.BOLD, 22));
+		add(bestLabel, (getWidth() - bestLabel.getWidth()) / 2.0, getHeight() / 2.0 + 10);
 		resultButton = new GRect(
 				(getWidth() - 260) / 2.0,
 				getHeight() / 2.0 + 20,
@@ -599,7 +623,7 @@ public class Breakout extends GraphicsProgram {
 		add(resultButton);
 
 		resultButtonLabel = new GLabel("Return to menu");
-		resultButtonLabel.setFont(new Font("Arial", Font.BOLD, 24));
+		resultButtonLabel.setFont(new Font("MonoSpaced", Font.BOLD, 24));
 		resultButtonLabel.setColor(new Color(50, 50, 50));
 		add(resultButtonLabel,
 				resultButton.getX() + (resultButton.getWidth() - resultButtonLabel.getWidth()) / 2.0,
