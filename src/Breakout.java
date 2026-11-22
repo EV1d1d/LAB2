@@ -76,7 +76,9 @@ public class Breakout extends GraphicsProgram {
 	private GImage levelOneIcon;
 	private GImage levelTwoIcon;
 	private GImage levelThreeIcon;
+	private GImage fruit;
 	private GRect selectedLevelBorder;
+
 	private int selectedLevel;
 	private boolean menuActive;
 	private volatile boolean levelChosen;
@@ -91,6 +93,7 @@ public class Breakout extends GraphicsProgram {
 	private boolean won;
 	private int destroyedBricks;
 	private static final int HUD = HEIGHT - (HEIGHT-(HEIGHT/100));
+
 	//sounds
 	private AudioClip ballSound;
 	private AudioClip brickSound;
@@ -111,8 +114,11 @@ public class Breakout extends GraphicsProgram {
 	private int points;
 	private double ballSpeed;
 	private boolean strongBricks;
+	private boolean bonuses;
 	private int heartAnimationFrames;
 	private double heartX,heartY;
+	private static final double FRUIT_SIZE=20;
+	private static final double FRUIT_SPEED=3;
 
 
 	/* Method: run() */
@@ -158,22 +164,25 @@ public class Breakout extends GraphicsProgram {
 
 	private void lvl3() {
 		lives = 1;
-		ballSpeed=5;
+		ballSpeed=9;
 		strongBricks=true;
+		bonuses=true;
 		startLevel();
 	}
 
 	private void lvl2() {
 		lives = 3;
-		ballSpeed = 4;
+		ballSpeed = 6;
 		strongBricks = true;
+		bonuses=true;
 		startLevel();
 	}
 
 	private void lvl1() {
 		lives = 5;
-		ballSpeed = 3;
+		ballSpeed = 4;
 		strongBricks = false;
+		bonuses=false;
 		startLevel();
 	}
 
@@ -237,6 +246,45 @@ public class Breakout extends GraphicsProgram {
 		double size = HEART_SIZE*scale;
 		heartIcon.setSize(size,size);
 		heartIcon.setLocation(heartX-(size-HEART_SIZE)/2,heartY-(size-HEART_SIZE)/2);
+	}
+
+
+		private void spawnFruit(){
+		if(!bonuses) return;
+		if(!random.nextBoolean(0.5)) return;
+
+		int whichFruit = random.nextInt(1,3);
+		if(whichFruit==1){
+			fruit = new GImage("Images/apple.png");
+		}else if(whichFruit==2){
+			fruit=new GImage("Images/banana.png");
+		}else{
+			fruit = new GImage("Images/watermelon.png");
+		}
+		fruit.setSize(FRUIT_SIZE,FRUIT_SIZE);
+		double x = brick.getX()+(brick.getWidth()- FRUIT_SIZE)/2;
+		add(fruit,x,brick.getY());
+	}
+
+	private void movingFruit(){
+		if (fruit==null || won ) return;
+
+		fruit.move(0,FRUIT_SPEED);
+
+		boolean hit = ball.getX() + ball.getWidth() > fruit.getX()
+				&& ball.getX() < fruit.getX() + fruit.getWidth()
+				&& ball.getY() + ball.getHeight() > fruit.getY()
+				&& ball.getY() < fruit.getY() + fruit.getHeight();
+
+		if(hit){
+			lives++;
+			updateHUD();
+			heartAnimationFrames=30;
+			remove(fruit);
+			fruit=null;
+		}else if(fruit.getY()>getHeight()){
+			remove(fruit);
+		}
 	}
 
     private void brickHitted() {
