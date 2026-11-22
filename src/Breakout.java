@@ -240,7 +240,10 @@ public class Breakout extends GraphicsProgram {
 	}
 
     private void brickHitted() {
-		points++;
+		//if(!brick.getColor().equals(Color.GRAY)){
+			points++;
+		//}
+
 		updateHUD();
 		destroyedBricks++;
 		if (destroyedBricks >= NBRICK_ROWS * NBRICKS_PER_ROW) {
@@ -468,12 +471,12 @@ public class Breakout extends GraphicsProgram {
 			if (overlaps) {
 				if (brick.getColor().equals(Color.GRAY)) {
 					brick.setColor(Color.LIGHT_GRAY);
+					points++;
 				} else {
 					brickHitted();
 					remove(brick);
 				}
 
-				remove(brick);
 				brickDestroyed.play();
 				if (previousY + ball.getHeight() <= brick.getY()
 						|| previousY >= brick.getY() + brick.getHeight()) {
