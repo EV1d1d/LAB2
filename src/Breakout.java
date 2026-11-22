@@ -70,7 +70,7 @@ public class Breakout extends GraphicsProgram {
 	//ui
 	private GImage paddle;
 	private GImage ball;
-	private GImage brick;
+	private GRect brick;
 	private GImage Menu;
 	private GImage gameBackground;
 	private GImage levelOneIcon;
@@ -118,9 +118,9 @@ public class Breakout extends GraphicsProgram {
 	private int heartAnimationFrames;
 	private double heartX,heartY;
 	private static final double FRUIT_SIZE=20;
-	private static final double FRUIT_SPEED=3;
+	private static final double FRUIT_SPEED=1;
 	private int FRUITSPAWN_DELAY;
-
+    private int bonusType;
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
@@ -252,10 +252,11 @@ public class Breakout extends GraphicsProgram {
 
 
 		private void spawnFruit(){
-		if(!bonuses) return;
+		if(!bonuses || fruit !=null) return;
 		if(!random.nextBoolean(0.5)) return;
 
 		int whichFruit = random.nextInt(1,3);
+		bonusType = whichFruit;
 		if(whichFruit==1){
 			fruit = new GImage("Images/apple.png");
 		}else if(whichFruit==2){
@@ -283,13 +284,25 @@ public class Breakout extends GraphicsProgram {
 				&& ball.getX() < fruit.getX() + fruit.getWidth()
 				&& ball.getY() + ball.getHeight() > fruit.getY()
 				&& ball.getY() < fruit.getY() + fruit.getHeight();
-
 		if(hit){
-			lives++;
-			updateHUD();
-			heartAnimationFrames=30;
-			remove(fruit);
-			fruit=null;
+            if(bonusType==1){
+				lives++;
+				updateHUD();
+				heartAnimationFrames=30;
+				remove(fruit);
+				fruit=null;
+			}else if(bonusType==2){
+				double newWidth = Math.min(paddle.getWidth() * 1.3, 200);
+				paddle.setSize(newWidth, paddle.getHeight());
+				remove(fruit);
+				fruit=null;
+			}else{
+				points+=5;
+				updateHUD();
+				remove(fruit);
+				fruit=null;
+			}
+
 		}else if(fruit.getY()>getHeight()){
 			remove(fruit);
 			fruit=null;
@@ -300,6 +313,7 @@ public class Breakout extends GraphicsProgram {
 		//if(!brick.getColor().equals(Color.GRAY)){
 			points++;
 		//}
+
 
 		updateHUD();
 		destroyedBricks++;
@@ -531,6 +545,7 @@ public class Breakout extends GraphicsProgram {
 					points++;
 				} else {
 					brickHitted();
+					this.brick=brick;
 					spawnFruit();
 					remove(brick);
 				}
