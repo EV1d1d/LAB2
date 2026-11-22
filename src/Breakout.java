@@ -119,6 +119,7 @@ public class Breakout extends GraphicsProgram {
 	private double heartX,heartY;
 	private static final double FRUIT_SIZE=20;
 	private static final double FRUIT_SPEED=3;
+	private int FRUITSPAWN_DELAY;
 
 
 	/* Method: run() */
@@ -189,6 +190,7 @@ public class Breakout extends GraphicsProgram {
 	private void startLevel(){
 		startGameMusic();
 		removeAll();
+		fruit=null;
 		setGameBackground();
 		drawBricks();
 		createPaddle();
@@ -264,12 +266,18 @@ public class Breakout extends GraphicsProgram {
 		fruit.setSize(FRUIT_SIZE,FRUIT_SIZE);
 		double x = brick.getX()+(brick.getWidth()- FRUIT_SIZE)/2;
 		add(fruit,x,brick.getY());
+		FRUITSPAWN_DELAY=50;
 	}
 
 	private void movingFruit(){
 		if (fruit==null || won ) return;
 
 		fruit.move(0,FRUIT_SPEED);
+
+		if(FRUITSPAWN_DELAY>0){
+			FRUITSPAWN_DELAY--;
+			return;
+		}
 
 		boolean hit = ball.getX() + ball.getWidth() > fruit.getX()
 				&& ball.getX() < fruit.getX() + fruit.getWidth()
@@ -284,6 +292,7 @@ public class Breakout extends GraphicsProgram {
 			fruit=null;
 		}else if(fruit.getY()>getHeight()){
 			remove(fruit);
+			fruit=null;
 		}
 	}
 
@@ -474,7 +483,7 @@ public class Breakout extends GraphicsProgram {
 				vy = -Math.sqrt(ballSpeed * ballSpeed - vx * vx);
 				playRandomWallHit();
 			}
-
+            movingFruit();
 			checkBrickCollision(previousY);
 
 			if (ball.getY() > getHeight()) {
@@ -522,6 +531,7 @@ public class Breakout extends GraphicsProgram {
 					points++;
 				} else {
 					brickHitted();
+					spawnFruit();
 					remove(brick);
 				}
 
