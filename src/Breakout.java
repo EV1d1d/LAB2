@@ -193,7 +193,7 @@ public class Breakout extends GraphicsProgram {
 	}
 
     private void createHUD() {
-		double hudHeight = HEIGHT/20;
+		double hudHeight = (double)HEIGHT/20;
 		GRect hud = new GRect(0,HUD,WIDTH,hudHeight);
 		hud.setFilled(true);
 		hud.setColor(new Color(200,0,50,120));
