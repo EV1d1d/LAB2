@@ -94,6 +94,7 @@ public class Breakout extends GraphicsProgram {
 	private int destroyedBricks;
 	private static final int HUD = HEIGHT - (HEIGHT-(HEIGHT/100));
 	private int bestScore;
+	private GImage badFruit;
 
 	//sounds
 	private AudioClip ballSound;
@@ -123,6 +124,10 @@ public class Breakout extends GraphicsProgram {
 	private int FRUITSPAWN_DELAY;
     private int bonusType;
 	private int freeLife=50;
+	private boolean badBonuses;
+	private int badfruitdelay;
+	private int badBonusType;
+
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
@@ -170,6 +175,7 @@ public class Breakout extends GraphicsProgram {
 		ballSpeed=9;
 		strongBricks=true;
 		bonuses=true;
+		badBonuses = true;
 		startLevel();
 	}
 
@@ -178,6 +184,7 @@ public class Breakout extends GraphicsProgram {
 		ballSpeed = 7;
 		strongBricks = true;
 		bonuses=true;
+		badBonuses=true;
 		startLevel();
 	}
 
@@ -186,6 +193,7 @@ public class Breakout extends GraphicsProgram {
 		ballSpeed = 5;
 		strongBricks = false;
 		bonuses=false;
+		badBonuses = false;
 		startLevel();
 	}
 
@@ -193,6 +201,7 @@ public class Breakout extends GraphicsProgram {
 		startGameMusic();
 		removeAll();
 		fruit=null;
+		badFruit=null;
 		setGameBackground();
 		drawBricks();
 		createPaddle();
@@ -308,6 +317,67 @@ public class Breakout extends GraphicsProgram {
 		}else if(fruit.getY()>getHeight()){
 			remove(fruit);
 			fruit=null;
+		}
+	}
+
+	private void spawnBadFruit(){
+		if(!badBonuses || badFruit != null) return;
+		if(!random.nextBoolean(0.3)) return;
+
+		int whichBadFruit = random.nextInt(1,3);
+		badBonusType = whichBadFruit;
+		if(whichBadFruit==1){
+			badFruit = new GImage("Images/gadskiy_apple.png");
+		}else if(whichBadFruit==2){
+			badFruit = new GImage("Images/gadskiy_banana.png");
+		}else{
+			badFruit = new GImage("Images/gadskiy_watermelon.png");
+		}
+		badFruit.setSize(FRUIT_SIZE,FRUIT_SIZE);
+		double x = brick.getX()+(brick.getWidth()- FRUIT_SIZE)/2;
+		add(badFruit,x,brick.getY());
+		badfruitdelay=50;
+	}
+
+	private void movingBadFruit(){
+		if (badFruit==null || won ) return;
+
+		badFruit.move(0,FRUIT_SPEED);
+
+		if(badfruitdelay>0){
+			badfruitdelay--;
+			return;
+		}
+
+		boolean hit = ball.getX() + ball.getWidth() > badFruit.getX()
+				&& ball.getX() < badFruit.getX() + badFruit.getWidth()
+				&& ball.getY() + ball.getHeight() > badFruit.getY()
+				&& ball.getY() < badFruit.getY() + badFruit.getHeight();
+		if(hit){
+			if(badBonusType==1){
+				lives--;
+				updateHUD();
+				heartAnimationFrames=30;
+				remove(badFruit);
+				badFruit=null;
+			}else if(badBonusType==2){
+				double newWidth = Math.max(paddle.getWidth() * 0.7, 40);
+				paddle.setSize(newWidth, paddle.getHeight());
+				remove(badFruit);
+				badFruit=null;
+			}else{
+				points-=5;
+				if(points<0){
+					points=0;
+				}
+				updateHUD();
+				remove(badFruit);
+				badFruit=null;
+			}
+
+		}else if(badFruit.getY()>getHeight()){
+			remove(badFruit);
+			badFruit=null;
 		}
 	}
 
@@ -503,6 +573,7 @@ public class Breakout extends GraphicsProgram {
 				playRandomWallHit();
 			}
             movingFruit();
+			movingBadFruit();
 			checkBrickCollision(previousY);
 
 			if (ball.getY() > getHeight()) {
@@ -552,6 +623,7 @@ public class Breakout extends GraphicsProgram {
 					brickHitted();
 					this.brick=brick;
 					spawnFruit();
+					spawnBadFruit();
 					remove(brick);
 				}
 
