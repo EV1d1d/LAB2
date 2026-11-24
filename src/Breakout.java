@@ -130,8 +130,7 @@ public class Breakout extends GraphicsProgram {
 	private int badBonusType;
 
 
-	/* Method: run() */
-	/** Runs the Breakout program. */
+	/** Initializes the game and runs the level-selection loop. */
 	public void run() {
 		setup();
 		musicInMenu = MediaTools.loadAudioClip("Music/menuMusic.wav");
@@ -172,6 +171,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Configures and starts the hardest level. */
 	private void lvl3() {
 		lives = 1;
 		ballSpeed=9;
@@ -181,6 +181,7 @@ public class Breakout extends GraphicsProgram {
 		startLevel();
 	}
 
+	/** Configures and starts the medium level. */
 	private void lvl2() {
 		lives = 2;
 		ballSpeed = 7;
@@ -190,15 +191,17 @@ public class Breakout extends GraphicsProgram {
 		startLevel();
 	}
 
+	/** Configures and starts the easiest level. */
 	private void lvl1() {
 		lives = 3;
 		ballSpeed = 5;
 		strongBricks = false;
-		bonuses=false;
+		bonuses=true;
 		badBonuses = false;
 		startLevel();
 	}
 
+	/** Resets the scene and starts a new level. */
 	private void startLevel(){
 		startGameMusic();
 		removeAll();
@@ -216,6 +219,7 @@ public class Breakout extends GraphicsProgram {
 		showResult(won);
 	}
 
+    /** Creates the heads-up display. */
     private void createHUD() {
 		double hudHeight = (double)HEIGHT/20;
 		GRect hud = new GRect(0,HUD,WIDTH,hudHeight);
@@ -241,6 +245,7 @@ public class Breakout extends GraphicsProgram {
 		updateHUD();
     }
 
+    /** Refreshes the lives and score labels. */
     private void updateHUD() {
         if(livesLabel==null) return;
 		double hudHeight = HEIGHT/20;
@@ -254,6 +259,7 @@ public class Breakout extends GraphicsProgram {
 
     }
 
+	/** Animates the heart icon after a life change. */
 	private void animateHeart(){
 		if(heartAnimationFrames<=0) return;
 		heartAnimationFrames--;
@@ -264,7 +270,8 @@ public class Breakout extends GraphicsProgram {
 	}
 
 
-		private void spawnFruit(){
+	/** Spawns a random positive bonus fruit. */
+	private void spawnFruit(){
 		if(!bonuses || fruit !=null) return;
 		if(!random.nextBoolean(0.5)) return;
 
@@ -283,6 +290,7 @@ public class Breakout extends GraphicsProgram {
 		FRUITSPAWN_DELAY=50;
 	}
 
+	/** Moves a bonus fruit and applies its effect. */
 	private void movingFruit(){
 		if (fruit==null || won ) return;
 
@@ -322,6 +330,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Spawns a random negative fruit when enabled. */
 	private void spawnBadFruit(){
 		if(!badBonuses || badFruit != null) return;
 		if(!random.nextBoolean(0.3)) return;
@@ -341,6 +350,7 @@ public class Breakout extends GraphicsProgram {
 		badfruitdelay=50;
 	}
 
+	/** Moves a negative fruit and applies its penalty. */
 	private void movingBadFruit(){
 		if (badFruit==null || won ) return;
 
@@ -383,11 +393,13 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Ends the current level with a win. */
 	private void cheatCodeWin(){
 		won=true;
 		lives=0;
 	}
 
+	/** Handles the W and S test shortcuts. */
 	public void keyPressed(KeyEvent e){
 		if(menuActive || showingResult) return;
 
@@ -398,11 +410,13 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Ends the current level with a loss. */
 	private void cheatCodeLose(){
 		won=false;
 		lives=0;
 	}
 
+    /** Awards points and checks whether all bricks are cleared. */
     private void brickHitted() {
 		points++;
 
@@ -420,6 +434,7 @@ public class Breakout extends GraphicsProgram {
 		}
     }
 
+    /** Switches playback from menu music to game music. */
     private void startGameMusic() {
 		menuActive = false;
 		musicInMenu.stop();
@@ -427,6 +442,7 @@ public class Breakout extends GraphicsProgram {
 		musicInGame.loop();
 	}
 
+	/** Displays the level-selection menu. */
 	private void menu() {
 		menuActive = true;
 		musicInGame.stop();
@@ -465,12 +481,14 @@ public class Breakout extends GraphicsProgram {
 		addLevelLabel("Level 3", startX + (iconWidth + gap) * 2, iconY, iconWidth, iconHeight);
 	}
 
+	/** Sets the volume when the clip supports volume control. */
 	private void setSafeVolume(AudioClip sound, double volume) {
 		if (sound instanceof SoundClip) {
 			((SoundClip) sound).setVolume(volume);
 		}
 	}
 
+	/** Plays a randomly selected wall-hit sound. */
 	private void playRandomWallHit() {
 		double soundIndex = random.nextDouble(0, 3);
 		if (soundIndex < 1) {
@@ -482,6 +500,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Adds a centered label below a level icon. */
 	private void addLevelLabel(String text, double iconX, double iconY,
 							   double iconWidth, double iconHeight) {
 		double labelY = iconY + iconHeight + 24;
@@ -499,6 +518,7 @@ public class Breakout extends GraphicsProgram {
 		add(levelLabel, labelX, textY);
 	}
 
+	/** Sets initial game values and displays the background. */
 	private void setup() {
 		setGameBackground();
 		lives = NTURNS;
@@ -506,12 +526,14 @@ public class Breakout extends GraphicsProgram {
 
 	}
 
+	/** Adds the scaled game background image. */
 	private void setGameBackground() {
 		gameBackground = new GImage("Images/gameBackground.jpg");
 		gameBackground.setSize(WIDTH, HEIGHT);
 		add(gameBackground);
 	}
 
+	/** Creates the brick grid and selects reinforced bricks. */
 	private void drawBricks(){
 		int luckyRow = random.nextInt(0,NBRICK_ROWS);
 		int luckyCol = random.nextInt(0,NBRICKS_PER_ROW);
@@ -540,6 +562,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Creates a filled brick at the given position and color. */
 	private GObject createBrick(double x, double y , Color color){
 		GRect brick = new GRect (x,y,BRICK_WIDTH,BRICK_HEIGHT);
 		brick.setFilled(true);
@@ -547,6 +570,7 @@ public class Breakout extends GraphicsProgram {
 		return brick;
 	}
 
+	/** Creates the ball and assigns its initial direction. */
 	private void createBall(){
 		ball = new GImage("Images/pig.png");
 		int ratio = (WIDTH+HEIGHT) / 300;
@@ -557,6 +581,7 @@ public class Breakout extends GraphicsProgram {
 		add(ball,getWidth()/2.0 - BALL_RADIUS,getHeight()/2.0 - BALL_RADIUS);
 	}
 
+	/** Runs the game loop and handles ball movement and collisions. */
 	private void startBallFlight() {
 		while (lives > 0) {
 			double previousY = ball.getY();
@@ -613,6 +638,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Chooses a new random direction after a lost life. */
 	private void setRandomBallDirection() {
 		double angle = random.nextDouble(20, 160);
 		vx = Math.cos(Math.toRadians(angle)) * ballSpeed;
@@ -621,6 +647,7 @@ public class Breakout extends GraphicsProgram {
 
 
 
+	/** Detects brick collisions, updates bricks, and reflects the ball. */
 	private void checkBrickCollision(double previousY) {
 		for (int i = 0; i < getElementCount(); i++) {
 			GObject object = getElement(i);
@@ -661,6 +688,7 @@ public class Breakout extends GraphicsProgram {
 		}
 	}
 
+	/** Displays the final score and waits for a return-to-menu click. */
 	private void showResult(boolean victory) {
 		showingResult = true;
 		returnToMenuChosen = false;
@@ -738,6 +766,7 @@ public class Breakout extends GraphicsProgram {
 		showingResult = false;
 	}
 
+	/** Creates and positions the player paddle. */
 	private void createPaddle(){
 		paddle = new GImage("Images/paddle.png");
 		int paddleRatioWidth = (WIDTH/PADDLE_WIDTH)+PADDLE_WIDTH;
@@ -746,6 +775,7 @@ public class Breakout extends GraphicsProgram {
 		add(paddle,(getWidth()-PADDLE_WIDTH)/2.0,getHeight() - PADDLE_Y_OFFSET-PADDLE_HEIGHT);
 	}
 
+	/** Moves the paddle with the mouse while keeping it on screen. */
 	public void mouseMoved(MouseEvent e){
 		if (paddle == null) {
 			return;
@@ -755,6 +785,7 @@ public class Breakout extends GraphicsProgram {
 		paddle.setLocation(x, paddle.getY());
 	}
 
+	/** Handles level selection and the return-to-menu button. */
 	public void mousePressed(MouseEvent e) {
 		if (showingResult) {
 			if (resultButton != null && resultButton.contains(e.getX(), e.getY())) {
