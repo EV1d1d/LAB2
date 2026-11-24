@@ -16,6 +16,7 @@ import acm.util.SoundClip;
 import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 
@@ -150,6 +151,7 @@ public class Breakout extends GraphicsProgram {
 		loseSound = MediaTools.loadAudioClip("Music/loseSound.wav");
 		setSafeVolume(loseSound, 0.5);
 		addMouseListeners();
+		addKeyListeners();
 
 		while (true) {
 			levelChosen = false;
@@ -379,6 +381,26 @@ public class Breakout extends GraphicsProgram {
 			remove(badFruit);
 			badFruit=null;
 		}
+	}
+
+	private void cheatCodeWin(){
+		won=true;
+		lives=0;
+	}
+
+	public void keyPressed(KeyEvent e){
+		if(menuActive || showingResult) return;
+
+		if(e.getKeyCode()==KeyEvent.VK_W){
+			cheatCodeWin();
+		}else if(e.getKeyCode()==KeyEvent.VK_S){
+			cheatCodeLose();
+		}
+	}
+
+	private void cheatCodeLose(){
+		won=false;
+		lives=0;
 	}
 
     private void brickHitted() {
